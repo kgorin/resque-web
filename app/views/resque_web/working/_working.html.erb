@@ -6,10 +6,11 @@
       <th>Where</th>
       <th>Queue</th>
       <th>Processing</th>
+      <th>Args</th>
     </tr>
     <% if worker_jobs.empty? %>
     <tr>
-      <td colspan="4" class="no-data">Nothing is happening right now...</td>
+      <td colspan="5" class="no-data">Nothing is happening right now...</td>
     </tr>
     <% end %>
 
@@ -28,6 +29,9 @@
           <% else %>
             <span class="waiting">Waiting for a job...</span>
           <% end %>
+        </td>
+        <td class="args">
+          <%= job['payload']['args'].to_s.truncate(50) %>
         </td>
       </tr>
     <% end %>
