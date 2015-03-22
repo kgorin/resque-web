@@ -1,3 +1,5 @@
+require 'resque-web/worker_job'
+
 module ResqueWeb
   module WorkingHelper
     def workers
@@ -9,7 +11,9 @@ module ResqueWeb
     end
 
     def worker_jobs
-      @worker_jobs ||= workers.zip(jobs).reject { |w, j| w.idle? || j['queue'].nil? }
+      @worker_jobs ||= workers.
+        map{ |w| ResqueWeb::WorkerJob.new(w) }.
+        reject { |w| w.idle? || w.queue.nil? }
     end
 
     def sorted_worker_jobs(sort_by = 'run_at', desc = false)
@@ -19,17 +23,7 @@ module ResqueWeb
   private
 
     def sorted_by(worker_jobs, sort_by, desc)
-      res = case sort_by
-      when 'run_at'
-        worker_jobs.sort_by { |w, j| j['run_at'] || '' }
-      when 'queue'
-        worker_jobs.sort_by { |w, j| j['queue'] || '' }
-      when 'worker_name'
-        worker_jobs.sort_by { |w, j| w.to_s || '' }
-      when 'job_class'
-        worker_jobs.sort_by { |w, j| j['payload']['class'] || '' }
-      end
-
+      res = worker_jobs.sort_by { |wj| wj.send(sort_by) }
       desc ? res.reverse : res
     end
   end

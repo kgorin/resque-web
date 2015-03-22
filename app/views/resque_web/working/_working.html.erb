@@ -14,24 +14,24 @@
     </tr>
     <% end %>
 
-    <% sorted_worker_jobs('worker_name').each do |worker, job| %>
+    <% sorted_worker_jobs('worker_name').each do |worker_job| %>
       <tr>
-        <td class="icon"><%= image_tag "resque_web/#{worker.state}.png", :alt => worker.state, :title => worker.state %></td>
-        <% host, pid, _ = worker.to_s.split(':') %>
+        <td class="icon"><%= image_tag "resque_web/#{worker_job.state}.png", :alt => worker_job.state, :title => worker_job.state %></td>
+        <% host, pid, _ = worker_job.to_s.split(':') %>
         <td class="where"><%= link_to "#{host}:#{pid}", worker_path(host) %></td>
         <td class="queues queue">
-          <%= link_to job['queue'], queue_path(job['queue']), :class => 'label label-info' %>
+          <%= link_to worker_job.queue, queue_path(worker_job.queue), :class => 'label label-info' %>
         </td>
         <td class="process">
-          <% if job['queue'] %>
-            <code><%= job['payload']['class'] %></code>
-            <small><%= "#{time_ago_in_words job['run_at']} ago" %></small>
+          <% if worker_job.queue %>
+            <code><%= worker_job.job_class %></code>
+            <small><%= "#{time_ago_in_words worker_job.run_at} ago" %></small>
           <% else %>
             <span class="waiting">Waiting for a job...</span>
           <% end %>
         </td>
         <td class="args">
-          <%= job['payload']['args'].to_s.truncate(50) %>
+          <%= worker_job.job_class.to_s.truncate(50) %>
         </td>
       </tr>
     <% end %>
