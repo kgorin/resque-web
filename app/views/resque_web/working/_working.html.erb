@@ -1,4 +1,4 @@
-  <h1 class="wi"><%= worker_jobs.size %> of <%= workers.size %> Workers Working</h1>
+  <h1 class="wi"><%= @worker_jobs.size %> of <%= workers.size %> Workers Working</h1>
   <p class="intro">The list below contains all workers which are currently running a job.</p>
   <table class="table table-bordered workers">
     <tr>
@@ -8,13 +8,13 @@
       <th>Processing</th>
       <th>Args</th>
     </tr>
-    <% if worker_jobs.empty? %>
+    <% if @worker_jobs.empty? %>
     <tr>
       <td colspan="5" class="no-data">Nothing is happening right now...</td>
     </tr>
     <% end %>
 
-    <% sorted_worker_jobs('worker_name').each do |worker_job| %>
+    <% @worker_jobs.each do |worker_job| %>
       <tr>
         <td class="icon"><%= image_tag "resque_web/#{worker_job.state}.png", :alt => worker_job.state, :title => worker_job.state %></td>
         <% host, pid, _ = worker_job.to_s.split(':') %>
